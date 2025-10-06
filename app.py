@@ -7,37 +7,51 @@ import joblib
 model = joblib.load("best_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# App title
+# Page setup
 st.set_page_config(page_title="Diabetes Prediction App", page_icon="🩺", layout="centered")
 st.title("🩺 Diabetes Prediction App")
 st.markdown("### Enter your health metrics below to predict your likelihood of diabetes.")
 
-# Load dataset for feature names
+# Load dataset and feature names
 df = pd.read_csv("diabetes_binary_5050split_health_indicators_BRFSS2015.csv")
 X = df.drop('Diabetes_binary', axis=1)
-feature_names = X.columns
+original_features = X.columns
 
-# Create three columns layout
+# ✅ Display names (for UI only)
+display_names = {
+    "HighBP": "High Blood Pressure",
+    "HighChol": "High Cholesterol",
+    "BMI": "Body Mass Index (BMI)",
+    "Smoker": "Smoker (Yes/No)",
+    "Stroke": "History of Stroke",
+    "PhysActivity": "Physical Activity",
+    "GenHlth": "General Health (1-5)",
+    "DiffWalk": "Difficulty Walking",
+    # add more as needed
+}
+
+# Create columns for layout
 st.markdown("## 🧩 Input Features")
 col1, col2, col3 = st.columns(3)
 
-inputs = []
-for i, feature in enumerate(feature_names):
+inputs = {}
+
+for i, feature in enumerate(original_features):
     with [col1, col2, col3][i % 3]:
-        # Use sliders when feature range makes sense
+        label = display_names.get(feature, feature)  # Show friendly name if available
         mean_val = float(df[feature].mean())
         min_val = float(df[feature].min())
         max_val = float(df[feature].max())
 
-        # If feature likely binary (0 or 1), use selectbox
+        # Binary or continuous input
         if set(df[feature].unique()) == {0, 1}:
-            value = st.selectbox(f"{feature}", [0, 1], index=int(mean_val))
+            value = st.selectbox(label, [0, 1], index=int(mean_val))
         else:
-            value = st.slider(f"{feature}", min_val, max_val, mean_val)
-        inputs.append(value)
+            value = st.slider(label, min_val, max_val, mean_val)
+        inputs[feature] = value  # keep original column name for model
 
-# Scale input
-input_array = np.array(inputs).reshape(1, -1)
+# Prepare input for model
+input_array = np.array([inputs[f] for f in original_features]).reshape(1, -1)
 scaled_input = scaler.transform(input_array)
 
 # Predict button
