@@ -21,13 +21,25 @@ original_features = X.columns
 display_names = {
     "HighBP": "High Blood Pressure",
     "HighChol": "High Cholesterol",
+    "CholCheck": "Cholesterol Check (Yes/No)",
     "BMI": "Body Mass Index (BMI)",
     "Smoker": "Smoker (Yes/No)",
     "Stroke": "History of Stroke",
-    "PhysActivity": "Physical Activity",
-    "GenHlth": "General Health (1-5)",
-    "DiffWalk": "Difficulty Walking",
-    # add more as needed
+    "HeartDiseaseorAttack": "Heart Disease or Heart Attack",
+    "PhysActivity": "Physical Activity (Yes/No)",
+    "Fruits": "Eats Fruits Regularly (Yes/No)",
+    "Veggies": "Eats Vegetables Regularly (Yes/No)",
+    "HvyAlcoholConsump": "Heavy Alcohol Consumption (Yes/No)",
+    "AnyHealthcare": "Has Any Healthcare Coverage (Yes/No)",
+    "NoDocbcCost": "Couldn’t See Doctor Due to Cost (Yes/No)",
+    "GenHlth": "General Health (1=Excellent, 5=Poor)",
+    "MentHlth": "Mental Health (Days per Month)",
+    "PhysHlth": "Physical Health (Days per Month)",
+    "DiffWalk": "Difficulty Walking (Yes/No)",
+    "Sex": "Sex",
+    "Age": "Age Category (1–13)",
+    "Education": "Education Level (1–6)",
+    "Income": "Income Level (1–8)"
 }
 
 # Create columns for layout
@@ -38,17 +50,21 @@ inputs = {}
 
 for i, feature in enumerate(original_features):
     with [col1, col2, col3][i % 3]:
-        label = display_names.get(feature, feature)  # Show friendly name if available
+        label = display_names.get(feature, feature)
         mean_val = float(df[feature].mean())
         min_val = float(df[feature].min())
         max_val = float(df[feature].max())
 
-        # Binary or continuous input
+        # Handle binary and numeric differently
         if set(df[feature].unique()) == {0, 1}:
-            value = st.selectbox(label, [0, 1], index=int(mean_val))
+            if feature.lower() == "sex":
+                value = st.selectbox(label, {"Female": 0, "Male": 1})
+            else:
+                value = st.selectbox(label, {"No": 0, "Yes": 1})
         else:
             value = st.slider(label, min_val, max_val, mean_val)
-        inputs[feature] = value  # keep original column name for model
+
+        inputs[feature] = value
 
 # Prepare input for model
 input_array = np.array([inputs[f] for f in original_features]).reshape(1, -1)
