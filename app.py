@@ -12,6 +12,71 @@ st.set_page_config(page_title="Diabetes Prediction App", page_icon="🩺", layou
 st.title("🩺 Diabetes Prediction App")
 st.markdown("### Enter your health metrics below to predict your likelihood of diabetes.")
 
+# --- Indicators/Value Meanings ---
+st.markdown("""
+#### ℹ️ **Feature Value Indicators**
+- **Age Group:**  
+    1 = 18-24, 2 = 25-29, 3 = 30-34, 4 = 35-39, 5 = 40-44, 6 = 45-49, 7 = 50-54, 8 = 55-59, 9 = 60-64, 10 = 65-69, 11 = 70-74, 12 = 75-79, 13 = 80+
+- **General Health (GenHlth):**  
+    1 = Excellent, 2 = Very Good, 3 = Good, 4 = Fair, 5 = Poor
+- **Mental Health (MentHlth):**  
+    Number of days in the past 30 days that mental health was not good (0–30)
+- **Physical Health (PhysHlth):**  
+    Number of days in the past 30 days that physical health was not good (0–30)
+- **Income:**  
+    1 = Less than $10,000, 2 = $10,000–$15,000, 3 = $15,000–$20,000, 4 = $20,000–$25,000, 5 = $25,000–$35,000, 6 = $35,000–$50,000, 7 = $50,000–$75,000, 8 = $75,000 or more
+- **Education:**  
+    1 = Never attended school or only kindergarten, 2 = Grades 1–8, 3 = Grades 9–11, 4 = Grade 12 or GED, 5 = College 1 year to 3 years, 6 = College 4 years or more
+- **Binary Features (HighBP, HighChol, Smoker, Stroke, PhysActivity, DiffWalk):**  
+    0 = No, 1 = Yes
+- **BMI:**  
+    Enter your actual Body Mass Index (e.g., 22.5)
+""")
+
+# Value mappings for dropdowns
+genhlth_map = {
+    1: "Excellent",
+    2: "Very Good",
+    3: "Good",
+    4: "Fair",
+    5: "Poor"
+}
+income_map = {
+    1: "Less than $10,000",
+    2: "$10,000–$15,000",
+    3: "$15,000–$20,000",
+    4: "$20,000–$25,000",
+    5: "$25,000–$35,000",
+    6: "$35,000–$50,000",
+    7: "$50,000–$75,000",
+    8: "$75,000 or more"
+}
+education_map = {
+    1: "Never attended school or only kindergarten",
+    2: "Grades 1–8",
+    3: "Grades 9–11",
+    4: "Grade 12 or GED",
+    5: "College 1 year to 3 years",
+    6: "College 4 years or more"
+}
+
+# Age group mapping for BRFSS 2015
+age_groups = {
+    1: "18-24",
+    2: "25-29",
+    3: "30-34",
+    4: "35-39",
+    5: "40-44",
+    6: "45-49",
+    7: "50-54",
+    8: "55-59",
+    9: "60-64",
+    10: "65-69",
+    11: "70-74",
+    12: "75-79",
+    13: "80+"
+}
+
 # Load dataset and feature names
 df = pd.read_csv("diabetes_binary_5050split_health_indicators_BRFSS2015.csv")
 X = df.drop('Diabetes_binary', axis=1)
@@ -27,6 +92,7 @@ display_names = {
     "PhysActivity": "Physical Activity",
     "GenHlth": "General Health (1-5)",
     "DiffWalk": "Difficulty Walking",
+    "Age": "Age Group",
     # add more as needed
 }
 
@@ -38,21 +104,70 @@ inputs = {}
 
 for i, feature in enumerate(original_features):
     with [col1, col2, col3][i % 3]:
-        label = display_names.get(feature, feature)  # Show friendly name if available
+        label = display_names.get(feature, feature)
         mean_val = float(df[feature].mean())
         min_val = float(df[feature].min())
         max_val = float(df[feature].max())
 
-        # Binary or continuous input
-        if set(df[feature].unique()) == {0, 1}:
+        if feature == "Age":
+            age_options = list(age_groups.items())
+            default_idx = int(mean_val) - 1 if 1 <= int(mean_val) <= 13 else 0
+            selected = st.selectbox(
+                label,
+                options=age_options,
+                format_func=lambda x: f"{x[1]} years",
+                index=default_idx
+            )
+            value = selected[0]
+        elif feature == "GenHlth":
+            genhlth_options = list(genhlth_map.items())
+            default_idx = int(mean_val) - 1 if 1 <= int(mean_val) <= 5 else 0
+            selected = st.selectbox(
+                label,
+                options=genhlth_options,
+                format_func=lambda x: f"{x[1]}",
+                index=default_idx
+            )
+            value = selected[0]
+        elif feature == "Income":
+            income_options = list(income_map.items())
+            default_idx = int(mean_val) - 1 if 1 <= int(mean_val) <= 8 else 0
+            selected = st.selectbox(
+                label,
+                options=income_options,
+                format_func=lambda x: f"{x[1]}",
+                index=default_idx
+            )
+            value = selected[0]
+        elif feature == "Education":
+            education_options = list(education_map.items())
+            default_idx = int(mean_val) - 1 if 1 <= int(mean_val) <= 6 else 0
+            selected = st.selectbox(
+                label,
+                options=education_options,
+                format_func=lambda x: f"{x[1]}",
+                index=default_idx
+            )
+            value = selected[0]
+        elif set(df[feature].unique()) == {0, 1}:
             value = st.selectbox(label, [0, 1], index=int(mean_val))
+        elif feature == "BMI":
+            value = st.number_input(
+                label,
+                min_value=min_val,
+                max_value=max_val,
+                value=mean_val,
+                step=0.1,
+                format="%.1f"
+            )
         else:
-            value = st.slider(label, min_val, max_val, mean_val)
-        inputs[feature] = value  # keep original column name for model
+            unique_vals = sorted(df[feature].unique())
+            value = st.selectbox(label, unique_vals, index=unique_vals.index(mean_val) if mean_val in unique_vals else 0)
+        inputs[feature] = value
 
-# Prepare input for model
-input_array = np.array([inputs[f] for f in original_features]).reshape(1, -1)
-scaled_input = scaler.transform(input_array)
+# Prepare input for model (fix: use DataFrame to avoid sklearn warning)
+input_df = pd.DataFrame([inputs], columns=original_features)
+scaled_input = scaler.transform(input_df)
 
 # Predict button
 st.markdown("---")
