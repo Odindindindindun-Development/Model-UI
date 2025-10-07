@@ -65,6 +65,10 @@ display_names = {
     "GenHlth": "General Health (1-5)",
     "DiffWalk": "Difficulty Walking",
     "Age": "Age Group",
+    "CholCheck": "Cholesterol Checkup",
+    "HvyAlcoholConsump": "Heavy Alcohol Consumption",
+    "MentHlth": "Mental Health",
+  
 }
 
 # Layout columns
@@ -165,3 +169,4 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
 # Footer
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit")
+
