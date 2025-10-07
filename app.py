@@ -128,6 +128,12 @@ for i, feature in enumerate(original_features):
             )
             value = selected[0]
 
+      elif feature == "Sex":
+          options = [("Female", 0), ("Male", 1)]
+          default_idx = int(mean_val)
+          selected = st.selectbox(label, options, index=default_idx, format_func=lambda x: x[0])
+          value = selected[1]
+
         elif set(df[feature].unique()) == {0, 1}:
             # Binary features -> Yes/No
             options = [("No", 0), ("Yes", 1)]
@@ -169,6 +175,7 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
 # Footer
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
