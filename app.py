@@ -12,25 +12,32 @@ st.set_page_config(page_title="Diabetes Prediction App", page_icon="🩺", layou
 st.title("🩺 Diabetes Prediction App")
 st.markdown("### Enter your health metrics below to predict your likelihood of diabetes.")
 
-# --- Indicators/Value Meanings ---
-st.markdown("""
-#### ℹ️ **Feature Value Indicators**
-- **Age Group:**  
-    1 = 18-24, 2 = 25-29, 3 = 30-34, 4 = 35-39, 5 = 40-44, 6 = 45-49, 7 = 50-54, 8 = 55-59, 9 = 60-64, 10 = 65-69, 11 = 70-74, 12 = 75-79, 13 = 80+
-- **General Health (GenHlth):**  
-    1 = Excellent, 2 = Very Good, 3 = Good, 4 = Fair, 5 = Poor
-- **Mental Health (MentHlth):**  
-    Number of days in the past 30 days that mental health was not good (0–30)
-- **Physical Health (PhysHlth):**  
-    Number of days in the past 30 days that physical health was not good (0–30)
-- **Income:**  
-    1 = Less than $10,000, 2 = $10,000–$15,000, 3 = $15,000–$20,000, 4 = $20,000–$25,000, 5 = $25,000–$35,000, 6 = $35,000–$50,000, 7 = $50,000–$75,000, 8 = $75,000 or more
-- **Education:**  
-    1 = Never attended school or only kindergarten, 2 = Grades 1–8, 3 = Grades 9–11, 4 = Grade 12 or GED, 5 = College 1 year to 3 years, 6 = College 4 years or more
-- **Binary Features (HighBP, HighChol, Smoker, Stroke, PhysActivity, DiffWalk):**  
-    0 = No, 1 = Yes
-- **BMI:**  
-    Enter your actual Body Mass Index (e.g., 22.5)
+# --- Indicators/Value Meanings in Sidebar ---
+st.sidebar.markdown("## ℹ️ Feature Value Indicators")
+st.sidebar.markdown("""
+**Age Group:**  
+1 = 18-24, 2 = 25-29, 3 = 30-34, 4 = 35-39, 5 = 40-44, 6 = 45-49, 7 = 50-54, 8 = 55-59, 9 = 60-64, 10 = 65-69, 11 = 70-74, 12 = 75-79, 13 = 80+
+
+**General Health (GenHlth):**  
+1 = Excellent, 2 = Very Good, 3 = Good, 4 = Fair, 5 = Poor
+
+**Mental Health (MentHlth):**  
+Number of days in the past 30 days that mental health was not good (0–30)
+
+**Physical Health (PhysHlth):**  
+Number of days in the past 30 days that physical health was not good (0–30)
+
+**Income:**  
+1 = Less than $10,000, 2 = $10,000–$15,000, 3 = $15,000–$20,000, 4 = $20,000–$25,000, 5 = $25,000–$35,000, 6 = $35,000–$50,000, 7 = $50,000–$75,000, 8 = $75,000 or more
+
+**Education:**  
+1 = Never attended school or only kindergarten, 2 = Grades 1–8, 3 = Grades 9–11, 4 = Grade 12 or GED, 5 = College 1 year to 3 years, 6 = College 4 years or more
+
+**Binary Features (HighBP, HighChol, Smoker, Stroke, PhysActivity, DiffWalk):**  
+0 = No, 1 = Yes
+
+**BMI:**  
+Enter your actual Body Mass Index (e.g., 22.5)
 """)
 
 # Value mappings for dropdowns
