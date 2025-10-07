@@ -71,6 +71,7 @@ display_names = {
     "MentHlth": "Mental Health",
     "Sex": "Sex",
     "PhysHlth": "Physical Health",
+    "NoDocbcCost": "No Doctor Because of Cost",
 }
 
 # Layout columns
@@ -157,4 +158,5 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
 # Footer
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit")
+
 
