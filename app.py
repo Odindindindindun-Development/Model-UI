@@ -70,6 +70,7 @@ display_names = {
     "HvyAlcoholConsump": "Heavy Alcohol Consumption",
     "MentHlth": "Mental Health",
     "Sex": "Sex",
+    "PhysHlth": "Physical Health",
 }
 
 # Layout columns
@@ -156,3 +157,4 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
 # Footer
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit")
+
